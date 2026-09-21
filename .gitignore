@@ -1,0 +1,28 @@
+0-*/
+0-*
+x-*/
+x-*
+__pycache__/
+*.aup3
+output/
+pocket-tts-embeddings/
+pocket-tts-output/
+pocket-tts-ckpt/
+audios/
+pretrained_models/
+TRASH/
+TRASH_EXEMPLES_MATHIEU/
+.cache/
+plots/
+data/
+dataset*/
+for_mathieu/
+
+# packaging / tooling
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+
+# diagnostic output
+combined_audio.wav
