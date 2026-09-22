@@ -23,6 +23,7 @@ for_mathieu/
 build/
 dist/
 .pytest_cache/
+docs/
 
 # diagnostic output
 combined_audio.wav
