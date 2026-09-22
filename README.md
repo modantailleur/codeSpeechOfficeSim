@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This is the code used to reproduce the [Speech Office Dataset](#speech-office-dataset-a-simulated-dataset-of-speech-in-office). Please refer to the Zenodo repository for more information about the dataset itself.
+This is the code used to reproduce the [Speech Office Dataset](https://zenodo.org/records/22687159). Please refer to the Zenodo repository for more information about the dataset itself.
 
 This repo mixes 3 type of audio files:
 - speech
