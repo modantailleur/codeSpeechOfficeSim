@@ -14,6 +14,7 @@ SUBCOMMANDS = [
     "mix",
     "vad",
     "office-level",
+    "check-integrity",
 ]
 
 

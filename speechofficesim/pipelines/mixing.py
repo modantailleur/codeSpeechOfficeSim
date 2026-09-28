@@ -24,6 +24,12 @@ SARS = {
     "high": 0,  # Ambient is 0dB quieter than speech
 }
 
+# Reference level the room-processed speech is leveled to before any ambient
+# content is added (see the derivation in run(), below). Exposed as a module
+# constant so other tools (e.g. pipelines/integrity_check.py) can check
+# against it without duplicating the number.
+TARGET_SPEECH_LAEQ = -136.93  # dBA
+
 
 def mix_scene(y_speech_scaled, y_events, y_bg, sr, ebr="mid", sar="mid"):
     """
@@ -147,10 +153,9 @@ def run(
 
                     # Stereo output -> compute average across channels
                     y_speech_p_dbA = compute_LAeq(y_speech_p, sr)
-                    target_laeq = -136.93  # dBA
 
                     # Compute linear scale factor
-                    scale = 10 ** ((target_laeq - y_speech_p_dbA) / 20)
+                    scale = 10 ** ((TARGET_SPEECH_LAEQ - y_speech_p_dbA) / 20)
 
                     # Apply to speech signal
                     y_speech_scaled = y_speech_p * scale

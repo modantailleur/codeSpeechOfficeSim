@@ -6,6 +6,7 @@ imported lazily so that e.g. `--help` and unrelated subcommands stay fast and
 don't pull in matplotlib/pyroomacoustics/pylangacq.
 """
 import argparse
+import sys
 
 
 def _cmd_monospeaker_reformat(args):
@@ -53,6 +54,19 @@ def _cmd_office_level(args):
         sr=args.sr,
         output_path=args.output_path,
     )
+
+
+def _cmd_check_integrity(args):
+    from .pipelines import integrity_check
+    _n_checked, n_failed = integrity_check.run(
+        dataset_path=args.dataset_path,
+        num_speakers=args.num_speakers,
+        num_segments=args.num_segments,
+        events_path=args.events_path,
+        background_path=args.background_path,
+        check_ebr=args.check_ebr,
+    )
+    sys.exit(1 if n_failed else 0)
 
 
 def build_parser():
@@ -108,6 +122,19 @@ def build_parser():
     p.add_argument("--sr", type=int, default=48000)
     p.add_argument("--output_path", type=str, default="combined_audio.wav")
     p.set_defaults(func=_cmd_office_level)
+
+    p = subparsers.add_parser(
+        "check-integrity",
+        help="Audit a generated dataset's EBR/SAR levels against the mixing pipeline's own definitions (no VCTK needed).",
+    )
+    p.add_argument("--dataset_path", type=str, required=True, help="Root of a generated SOS-1SP/SOS-2SP dataset.")
+    p.add_argument("--num_speakers", type=int, default=1, help="How many speaker/pair ids to check (first N, sorted).")
+    p.add_argument("--num_segments", type=int, default=1, help="How many segments per speaker/pair to check (first M, sorted).")
+    p.add_argument("--events_path", type=str, default="./audio/office_events.wav")
+    p.add_argument("--background_path", type=str, default="./audio/ch01ch04-ooffice-demand.wav")
+    p.add_argument("--check_ebr", action="store_true",
+                    help="Also run the EBR check (best-effort, ~30s per file via FFT cross-correlation; SAR check alone is instant).")
+    p.set_defaults(func=_cmd_check_integrity)
 
     return parser
 
