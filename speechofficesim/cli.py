@@ -69,6 +69,19 @@ def _cmd_check_integrity(args):
     sys.exit(1 if n_failed else 0)
 
 
+def _cmd_check_integrity_old(args):
+    from .pipelines import integrity_check_old
+    _n_checked, n_failed = integrity_check_old.run(
+        dataset_path=args.dataset_path,
+        num_speakers=args.num_speakers,
+        num_segments=args.num_segments,
+        events_path=args.events_path,
+        background_path=args.background_path,
+        check_ebr=args.check_ebr,
+    )
+    sys.exit(1 if n_failed else 0)
+
+
 def build_parser():
     parser = argparse.ArgumentParser(
         prog="speechofficesim",
@@ -135,6 +148,22 @@ def build_parser():
     p.add_argument("--check_ebr", action="store_true",
                     help="Also run the EBR check (best-effort, ~30s per file via FFT cross-correlation; SAR check alone is instant).")
     p.set_defaults(func=_cmd_check_integrity)
+
+    p = subparsers.add_parser(
+        "check-integrity-old",
+        help="Same as check-integrity, for datasets generated with the old 'asr' naming and "
+             "extra evaluation/ folder (ebr-high-asr-high/evaluation/pan_0/...).",
+    )
+    p.add_argument("--dataset_path", type=str, required=True,
+                    help="Root of an old-layout generated dataset (e.g. .../OfficeSpeech-EBR-ASR-MONOSPEAKER "
+                         "or .../OfficeSpeech-EBR-ASR-MULTISPEAKER, the old names for SOS-1SP/SOS-2SP).")
+    p.add_argument("--num_speakers", type=int, default=1, help="How many speaker/pair ids to check (first N, sorted).")
+    p.add_argument("--num_segments", type=int, default=1, help="How many segments per speaker/pair to check (first M, sorted).")
+    p.add_argument("--events_path", type=str, default="./audio/office_events.wav")
+    p.add_argument("--background_path", type=str, default="./audio/ch01ch04-ooffice-demand.wav")
+    p.add_argument("--check_ebr", action="store_true",
+                    help="Also run the EBR check (best-effort, ~30s per file via FFT cross-correlation; SAR check alone is instant).")
+    p.set_defaults(func=_cmd_check_integrity_old)
 
     return parser
 

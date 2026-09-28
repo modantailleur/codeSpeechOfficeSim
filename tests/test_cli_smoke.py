@@ -15,6 +15,7 @@ SUBCOMMANDS = [
     "vad",
     "office-level",
     "check-integrity",
+    "check-integrity-old",
 ]
 
 
